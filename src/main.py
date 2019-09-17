@@ -1,16 +1,39 @@
 import sys
+import os
+import numpy as np
+
+from random import randint
+from typing import List
+
 import pygame
 from pygame.locals import *
+import pygame.surfarray as sfarray
 
-from src import Cenario, Camera
+from src.cenario import Pista
+from src.agentes import Carro
+from src.camera import Camera
+from src.utils import load_image
 
-pygame.init()
+x_window_pos = 100
+y_window_pos = 100
+os.environ['SDL_VIDEO_WINDOW_POS'] = "{},{}".format(x_window_pos, y_window_pos)
 
-SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = (1280, 860)
-screen = pygame.display.set_mode(SCREEN_SIZE)
+CONSTANTS ={
+    'CENARIO_SPEED': 4
+}
 
-cenario = Cenario('./res/images/pista.png')
-camera = Camera(cenario)
+def posiciona_carros_atras_da_faixa(posicao_faixa: pygame.Rect, carros: List[Carro]):
+    for carro in carros:
+        bottom_faixa = posicao_faixa.bottom
+        left_faixa = posicao_faixa.left
+        largura_faixa = posicao_faixa.height
+        altura_faixa = posicao_faixa.width
+
+        topo_carro = randint(bottom_faixa, bottom_faixa + altura_faixa * 2)
+        esquerda_carro = randint(left_faixa, left_faixa + largura_faixa)
+
+        carro.rect.top = topo_carro
+        carro.rect.left = esquerda_carro + carro.rect.height / 2
 
 def verify_key_events(ev, btnStates):
     pressed = False
@@ -30,15 +53,36 @@ def verify_key_events(ev, btnStates):
 
 def mov_cenario(btnStates, backgrndPos):
     if btnStates['K_DOWN_PRESSED']:
-        backgrndPos.top -= 4
+        backgrndPos.top -= CONSTANTS['CENARIO_SPEED']
     if btnStates['K_UP_PRESSED']:
-        backgrndPos.top += 4
+        backgrndPos.top += CONSTANTS['CENARIO_SPEED']
     if btnStates['K_LEFT_PRESSED']:
-        backgrndPos.right -= 4
+        backgrndPos.right += CONSTANTS['CENARIO_SPEED']
     if btnStates['K_RIGHT_PRESSED']:
-        backgrndPos.right += 4
+        backgrndPos.right -= CONSTANTS['CENARIO_SPEED']
 
     return  backgrndPos
+
+pygame.init()
+
+screen = pygame.display.set_mode((1400, 860))
+
+pista = Pista('pista')
+camera = Camera(pista)
+
+faixa, faixa_pos = load_image('./res/images/faixa.png')
+faixa_pos.topleft = 1218, 812
+pista.blit(faixa, faixa_pos)
+
+pista.preencher_matriz_distancias(faixa_pos)
+
+
+carros = [Carro() for c in range(20)]
+
+posiciona_carros_atras_da_faixa(faixa_pos, carros)
+
+renderCarros = pygame.sprite.RenderPlain(carros)
+
 
 while True:
     for event in pygame.event.get():
@@ -49,7 +93,8 @@ while True:
         pygame.event.clear()
 
     if True in camera.camBtnStates.values():
-        cenario.position = mov_cenario(camera.camBtnStates, cenario.position)
+        pista.rect = mov_cenario(camera.camBtnStates, pista.rect)
 
-    screen.blit(cenario.img, cenario.position)
+    renderCarros.draw(pista.image)
+    screen.blit(pista.image, pista.rect)
     pygame.display.update()
