@@ -1,12 +1,10 @@
-import numba
-
 import numpy as np
-from numba import jit, njit
-from numba.typed import List
+from numba import jit
 
-MAIOR_DISTANCIA_POSSIVEL = 99999999
+MAIOR_DISTANCIA_POSSIVEL = 100000
 
-@jit(nopython=True)
+
+@jit(nopython=True, cache=True)
 def preencher_matriz_colisao(imageArray: np.ndarray, matriz_colisao):
     for w in range(imageArray.shape[0]):
         for h in range(imageArray.shape[1]):
@@ -18,8 +16,8 @@ def preencher_matriz_colisao(imageArray: np.ndarray, matriz_colisao):
 
 
 @jit(nopython=True)
-def preencher_matriz_distancias(imageArray: np.ndarray, matrizColisao: np.ndarray, matrizDistancias: np.ndarray, xyLinhaChegada):
-
+def preencher_matriz_distancias(imageArray: np.ndarray, matrizColisao: np.ndarray, matrizDistancias: np.ndarray,
+                                xyLinhaChegada):
     matrizDistancias[xyLinhaChegada[0]][xyLinhaChegada[1]] = 0
     while True:
         mudanca = 0
@@ -31,30 +29,28 @@ def preencher_matriz_distancias(imageArray: np.ndarray, matrizColisao: np.ndarra
                     if menor_vizinho < matrizDistancias[w][h]:
                         matrizDistancias[w][h] = menor_vizinho
                         mudanca += 1
-        print('Mudanças: ', mudanca)
+                else:
+                    matrizDistancias[w][h] = -1
         if mudanca == 0:
             break
 
-    for w in range(imageArray.shape[0]):
-        for h in range(imageArray.shape[1]):
-            if matrizColisao[w][h] == 0:
-                matrizDistancias[w][h] = -1
     return matrizDistancias
 
-@jit(nopython=True)
-def encontrar_maior_distancia(matriz_distancias, matriz_colisao):
+
+@jit(nopython=True, cache=True)
+def calcula_comprimento_pista(matriz_distancias, matriz_colisao):
     print('Procurando maior distancia...')
     maior = 0
     for w in range(matriz_distancias.shape[0]):
         for h in range(matriz_distancias.shape[1]):
             if matriz_colisao[w][h] == 1:
-                if matriz_distancias[w][h] > maior and matriz_distancias[w][h] != np.inf:
+                if matriz_distancias[w][h] > maior and matriz_distancias[w][h] != MAIOR_DISTANCIA_POSSIVEL:
                     maior = matriz_distancias[w][h]
 
     return maior
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def _encontrarMenorVizinho(matrizDistancias: np.ndarray, i, j):
     vizinhos = np.array([
         matrizDistancias[i - 1][j + 1],
@@ -73,3 +69,13 @@ def _encontrarMenorVizinho(matrizDistancias: np.ndarray, i, j):
             menor = i
 
     return menor
+
+
+@jit(nopython=True, cache=True)
+def constroi_paredes_colisao(matrizColisao: np.ndarray, paredesColisao: np.ndarray):
+    branco = [255, 255, 255]
+    for i in range(matrizColisao.shape[0]):
+        for j in range(matrizColisao.shape[1]):
+            if matrizColisao[i][j] > 0:
+                paredesColisao[i][j] = branco
+    return paredesColisao

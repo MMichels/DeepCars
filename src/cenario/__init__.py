@@ -1,2 +1,2 @@
-from src.cenario.cenario import Cenario
-from src.cenario.pista import Pista
+from src.cenario.cenario import *
+from src.cenario.pista import *

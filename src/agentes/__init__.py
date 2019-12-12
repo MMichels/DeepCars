@@ -1,1 +1,1 @@
-from src.agentes.carro import Carro
+from src.agentes.carro import *

@@ -3,7 +3,7 @@ import pygame
 
 class Camera:
    
-    def __init__(self, cenario):
+    def __init__(self):
         self.camBtnStates = {
             'K_DOWN_PRESSED': False,
             'K_UP_PRESSED': False,
@@ -23,9 +23,7 @@ class Camera:
         return cenario_pos
 
     def verificar_eventos(self, event):
-        pressionado = False
-        if event.type == KEYDOWN:
-            pressionado = True
+        pressionado = event.type == KEYDOWN
 
         if event.key in [K_DOWN, K_UP, K_RIGHT, K_LEFT]:
             if event.key == K_DOWN:
