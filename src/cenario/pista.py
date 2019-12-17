@@ -74,7 +74,7 @@ class Pista(Cenario):
                 objsColididos += 1
         if self.distancia_corte > 0:
             self.distancia_corte -= self.incremento_distancia_corte
-            self.incremento_distancia_corte += 0.001
+            #self.incremento_distancia_corte += 0.0001
 
     def desenhaSensores(self, carro: Carro):
         leituraSensores = carro.ler_sensores()

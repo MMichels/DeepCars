@@ -66,6 +66,7 @@ class Carro(Sprite):
         #                       QTD_NEURONIOS_CAMADA_SAIDA)
         #self.cerebro = RedeNeural(18, 6, 1, 4)
         #self.cerebro = Keural(self.qtdSensores, QTD_CAMADAS_ESCONDIDAS, QTD_NEURONIOS_CAMADA_ESCONDIDA, QTD_NEURONIOS_CAMADA_SAIDA)
+        
         self.cerebro = Torcerebro(QTD_SENSORES, QTD_CAMADAS_ESCONDIDAS, QTD_NEURONIOS_CAMADA_ESCONDIDA, QTD_NEURONIOS_CAMADA_SAIDA)
         self.respostaCerebro = [0, 0, 0, 0]
         self._carregaMelhorCerebro()

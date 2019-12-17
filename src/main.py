@@ -18,11 +18,11 @@ from src.camera import Camera
 from src.utils import load_image
 from src.utils.logDuracao import listaTempos, encontrarMedia
 
-x_window_pos = 30
-y_window_pos = 30
+x_window_pos = 15
+y_window_pos = 15
 os.environ['SDL_VIDEO_WINDOW_POS'] = "{},{}".format(x_window_pos, y_window_pos)
-QTD_CARROS = 30
-TEMPO_PRE_COMPETICAO = 15
+QTD_CARROS = 40
+TEMPO_PRE_COMPETICAO = 20
 
 def verificarEvento(event):
     camera.verificar_eventos(event)
@@ -84,7 +84,7 @@ def iniciar_nova_competicao(carros, faixa_largada_pos, pista: Pista):
 
 pygame.init()
 
-screen = pygame.display.set_mode((1400, 1000))
+screen = pygame.display.set_mode((1300, 700))
 
 font = pygame.font.SysFont('arial', 30)
 text = font.render("Inicializando...", 1, (255, 255, 255))
@@ -120,6 +120,8 @@ inicioPartida = time.time()
 competindo = False
 Jogando = True
 rodada = 0
+pista.rect.bottom = 850
+pista.rect.right = 1300
 while Jogando:
     #print('.', end='')
     ini = time.time()
@@ -152,7 +154,7 @@ while Jogando:
         competir(carrosCompetindo, pista)
 
         carrosColididos = Carro.contaCarrosColididos(carros)
-        if carrosColididos == QTD_CARROS:
+        if carrosColididos == QTD_CARROS or pista.distancia_corte <= 1:
             print('Duração dessa partida: {} segundos'.format(int(time.time() - inicioPartida)))
 
             melhorCarro = Carro.buscarMelhorCarro(carros, pista.matriz_distancias, pista.comprimento_pista)

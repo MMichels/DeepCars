@@ -13,13 +13,13 @@ class Camera:
         
     def mov_cenario(self, cenario_pos):
         if self.camBtnStates['K_DOWN_PRESSED']:
-            cenario_pos.top -= 4
+            cenario_pos.top -= 10
         if self.camBtnStates['K_UP_PRESSED']:
-            cenario_pos.top += 4
+            cenario_pos.top += 10
         if self.camBtnStates['K_LEFT_PRESSED']:
-            cenario_pos.right -= 4
+            cenario_pos.right -= 10
         if self.camBtnStates['K_RIGHT_PRESSED']:
-            cenario_pos.right += 4
+            cenario_pos.right += 10
         return cenario_pos
 
     def verificar_eventos(self, event):
