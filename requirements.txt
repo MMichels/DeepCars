@@ -1,7 +1,7 @@
 Cython==0.29.14
 Keras==2.3.1
 numba==0.46.0
-numpy==1.17.3
+numpy==1.22.0
 pandas==0.25.3
 pygame==1.9.6
 scikit-learn==0.21.3
